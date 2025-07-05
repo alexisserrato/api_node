@@ -3,6 +3,8 @@ const express=require('express'); // importando una libreria
 
 const app=express()// intancioando una aplicacion tipo express
 
+// esto permite leer un  JSON QUE LLEGUE POR BODY
+app.use(express.json())
 //req: request
 //res: response
 /*
@@ -22,25 +24,70 @@ const port=3000;
 let  usuarios=[
     {id:1, nombre:"alexis",email: "alexisserrato1992@gmail.com"},
     {id:2, nombre:"ernesto",email: "serratopublicidad@gmail.com"},
+    {id:3, nombre:"camilo",email: "camiloserrato@gmail.com"},
 ]
-app.get("/usuarios",(req, res)=>{
+app.get("/usuarios/todos",(req, res)=>{
     res.json(usuarios)
 });
 
 // obtener usuarios por id
 
-app.get("/usuarios/:id", (req,res)=>{
+app.get("/usuarios/buscar/:id", (req,res)=>{
     const id = parseInt (req.params.id);
     //console.log(typeof(id))
     const usuario=usuarios.find(user=>user.id===id)
+    //console.log(usuario)
+    if(!usuario){
+        res.status(404).json({
+            mensaje:"Usuario no encontrado"
+        })
+    }
     res.json(usuario)
 })
 
+// crear un nuevo usuario
+app.post("/usuarios/crear",(req, res)=>{
+    //console.log(req.body)
+    const {nombre, email}=req.body;
+    //console.log(nombre, email)
+    const nuevoUsuario={
+        id:usuarios.length+1,
+        nombre:nombre,
+        email:email,
+    }
 
 
+    // guardar el objetoo creado en la BBDD
+    usuarios.push(nuevoUsuario)
+    res.status(201).json({
+        mensaje:"Usuario creado correctamente",
+        usuarioCreado:nuevoUsuario
+    })
+   
+})
 
+//actualizar un usuario Update
 
+app.put("/usuarios/actualizar/:id",(req, res)=>{
+    const {nombre, email}=req.body;
+    const id=parseInt(req.params.id);
+    //buscar 
+    const usuario=usuarios.find(u=>u.id===id)
+    if(!usuario){
+        res.status(404).json({
+            mensaje:"Usuario a modificar no encontrado"
+        })
+    }
+    const infoAnterior=(usuario.nombre,usuario.email); //guardo los datos encontrados
+    usuario.nombre=nombre;//modifica campo nombre
+    usuario.email=email;
+    res.status(202).json({
+        mensaje:"Usuario modificado correctamento",
+        infoAnterior:infoAnterior,
+        infoNueva:usuario
+    })
 
+ })
 
 
 
