@@ -89,6 +89,29 @@ app.put("/usuarios/actualizar/:id",(req, res)=>{
 
  })
 
+ //delete
+ app.delete("/usuarios/eliminar/:id",(req,res)=>{
+    //captura el id pasado por parametros
+    const id=parseInt(req.params.id);
+    //encontrar el indice correspondiente al id
+    const index=usuarios.findIndex(user=>user.id===id)
+    //eliminar de la lista la info del indice encontrado
+    //console.log(index)
+    if(index===-1){
+        res.status(404).json({
+            mensaje:`usuario con id ${id} no encontrado`
+        })
+        return;
+    }else{  
+        usuarios.splice(index)
+         res.status(200).json({
+         mensaje:`usuario con id ${id} eliminadocorrectamente`
+    })
+
+    }
+  
+
+ })
 
 
 
