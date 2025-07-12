@@ -1,12 +1,23 @@
 const express=require('express'); // importando una libreria
 require("dotenv").config(); // esto carga la variables
 const sequelize=require("./config/database")
+const router =require('./routes/UsuarioRoute')
 
 const app=express()// intancioando una aplicacion tipo express
 // const port=3000;
 // esto permite leer un  JSON QUE LLEGUE POR BODY
 const port=process.env.PORT
 app.use(express.json())
+
+
+app.use('/', router);
+
+// sequelize sincroniza la base de datos con el proyecto
+sequelize.sync().then(()=>{
+
+}).catch((error)=>{
+    console.log(`error al conectar la base de datos ${error}`)
+});
 
 app.listen(port,()=>{
     console.log(`servidor ejecutando en el puerto ${port}`)
