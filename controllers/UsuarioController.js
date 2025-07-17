@@ -17,37 +17,20 @@ exports.obtenerUsuariosPorId=async(req,res)=>{
 }
 
 
-
-
-
 exports.crearNuevoUsuario = async (req, res) => {
-    try {
-        const { nombre, email } = req.body;
-
-        if (!nombre || !email) {
-            return res.status(400).json({ mensaje: "Nombre y email son requeridos" });
-        }
-
-        const nuevoUsuario = await Usuario.create({
-            nombre,
-            email
-        });
-
-        res.status(201).json({
-            mensaje: "Usuario creado correctamente",
-            usuarioCreado: nuevoUsuario
-        });
-
-    } catch (error) {
-        console.error("Error al crear usuario:", error);
-        res.status(500).json({
-            mensaje: "Hubo un error al crear el usuario"
+    const { nombre, email } = req.body;
+    const existeUsuario = await Usuario.findOne({ email } );
+    if (existeUsuario) {
+        return res.status(409).json({ 
+            mensaje: "El email ya está registrado" 
         });
     }
+    const nuevoUsuario = await Usuario.create({ nombre, email }); // Crear nuevo usuario
+    res.status(201).json({                            // Respuesta exitosa
+        mensaje: "Usuario creado correctamente",
+        usuarioCreado: nuevoUsuario
+    });
 };
-
-
-
 
 // // crear un nuevo usuario
 // app.post("/usuarios/crear",(req, res)=>{
